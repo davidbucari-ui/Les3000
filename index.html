@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Les 3000 — compteur de points</title>
+<title>Le 3000 — compteur de points</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Karla:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -154,7 +154,7 @@ function dieSVG(v){
 /* ---------- setup ---------- */
 function renderSetup(){
   app.innerHTML = `
-  <h1><span class="thin">Compteur de points</span>Les 3000</h1>
+  <h1><span class="thin">Compteur de points</span>Le 3000</h1>
   <p class="hint" style="margin:14px 0 20px">Cinq dés, un pot qui grossit, et la question à chaque lancer&nbsp;: on banque ou on relance&nbsp;?</p>
 
   <div class="card">
@@ -171,10 +171,12 @@ function renderSetup(){
     <div class="seg" data-seg="target">
       ${[3000,5000,10000].map(v=>`<button data-v="${v}" aria-pressed="${S.target===v}">${v}</button>`).join('')}
     </div>
-    <p class="hint" style="margin:14px 0 6px">Ouverture — points minimum pour entrer en jeu</p>
-    <div class="seg" data-seg="entry">
-      ${[0,300,500].map(v=>`<button data-v="${v}" aria-pressed="${S.entry===v}">${v===0?'Aucune':v}</button>`).join('')}
+    <p class="hint" style="margin:14px 0 6px">Ouverture — points minimum à faire en un tour pour entrer en jeu</p>
+    <input type="number" id="entryVal" min="0" step="50" inputmode="numeric" value="${S.entry}" aria-label="Montant de l'ouverture">
+    <div class="seg" data-seg="entry" style="margin-top:8px">
+      ${[0,300,500,1000].map(v=>`<button data-v="${v}" aria-pressed="${S.entry===v}">${v===0?'Aucune':v}</button>`).join('')}
     </div>
+    <p class="hint" style="margin:8px 0 0;font-size:12px">Mettez 0 pour que chacun marque dès le premier tour.</p>
     <label class="opt"><input type="checkbox" id="exact" ${S.exact?'checked':''}> Il faut tomber exactement sur ${S.target} pour gagner</label>
   </div>
 
@@ -195,6 +197,13 @@ function renderSetup(){
     S[seg.dataset.seg]=+b.dataset.v;renderSetup();
   }));
   document.getElementById('exact').onchange=e=>S.exact=e.target.checked;
+  const ev = document.getElementById('entryVal');
+  ev.oninput = e => {
+    const n = parseInt(e.target.value,10);
+    S.entry = isNaN(n) || n < 0 ? 0 : n;
+    document.querySelectorAll('[data-seg=entry] button').forEach(b=>b.setAttribute('aria-pressed', +b.dataset.v===S.entry));
+    save();
+  };
   document.getElementById('start').onclick=()=>{
     S.players = S.names.map((n,i)=>({name:(n||'').trim()||`Joueur ${i+1}`,score:0,in:S.entry===0}));
     S.phase='play';S.current=0;S.pot=0;S.log=[];S.msg='';S.snapshots=[];
