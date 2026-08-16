@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Le 3000 — compteur de points</title>
+
+<!-- Installation sur l'écran d'accueil -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Le 3000">
+<meta name="application-name" content="Le 3000">
+<meta name="theme-color" content="#12402F">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<link rel="icon" href="./icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Karla:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -591,7 +601,7 @@ function renderPlay(){
     <button class="btn-ghost" data-rules>Règles</button>
     <button class="btn-ghost" id="reset">Nouvelle partie</button>
   </div>
-  <p class="tag" style="text-align:center;margin-top:18px;opacity:.5">version 5</p>`;
+  <p class="tag" style="text-align:center;margin-top:18px;opacity:.5">version 6</p>`;
 
   const on = (id,fn)=>{const el=document.getElementById(id); if(el) el.onclick=fn};
   on('bank', bank);
