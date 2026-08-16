@@ -102,10 +102,111 @@ label.opt{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px;
 .win{text-align:center;padding:26px 16px}
 .win .num{font-size:54px;color:var(--brass);display:block;margin:8px 0}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- feuille de règles ---------- */
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(6,22,16,.94);backdrop-filter:blur(6px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.sheet[hidden]{display:none}
+.sheet-inner{max-width:560px;margin:0 auto;padding:0 16px 56px}
+.sheet-head{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;
+  padding:14px 0;background:rgba(6,22,16,.96);border-bottom:1px solid var(--line);margin-bottom:20px}
+.sheet-body h2{color:var(--brass);font-size:13px;letter-spacing:.2em;margin-bottom:10px}
+.sheet-body h3{font-family:"Karla",sans-serif;font-size:15px;font-weight:700;margin:0 0 4px}
+.sheet-body p{margin:0 0 10px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:12px}
+.tbl td{padding:8px 0;border-bottom:1px solid var(--line)}
+.tbl td:last-child{text-align:right;font-family:"Space Mono",monospace;color:var(--brass);white-space:nowrap}
+.steps{margin:0;padding-left:20px;font-size:14.5px;color:var(--muted)}
+.steps li{margin-bottom:9px}
+.steps strong{color:var(--bone)}
+.var{border-left:2px solid var(--brass);padding:2px 0 2px 14px;margin-bottom:18px}
+.var p{font-size:14px;color:var(--muted);margin:0}
 </style>
 </head>
 <body>
 <div class="wrap" id="app"></div>
+
+<div id="sheet" class="sheet" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Règles du jeu">
+  <div class="sheet-inner">
+    <div class="sheet-head">
+      <span class="tag">Règles</span>
+      <button id="sheetClose" class="btn-ghost" style="padding:8px 14px">Fermer</button>
+    </div>
+    <div class="sheet-body">
+      <h1 style="font-size:34px;margin-bottom:14px">Le 3000</h1>
+      <p class="hint">Cinq dés, un pot qui grossit à chaque lancer, et une seule question&nbsp;: on encaisse, ou on relance&nbsp;? Premier joueur à atteindre l'objectif.</p>
+
+      <h2 style="margin-top:26px">Ce qui marque</h2>
+      <table class="tbl">
+        <tr><td>Chaque 1</td><td>100</td></tr>
+        <tr><td>Chaque 5</td><td>50</td></tr>
+        <tr><td>2, 3, 4, 6 isolés</td><td>0</td></tr>
+        <tr><td>Brelan de 1</td><td>1000</td></tr>
+        <tr><td>Brelan de 2</td><td>200</td></tr>
+        <tr><td>Brelan de 3</td><td>300</td></tr>
+        <tr><td>Brelan de 4</td><td>400</td></tr>
+        <tr><td>Brelan de 5</td><td>500</td></tr>
+        <tr><td>Brelan de 6</td><td>600</td></tr>
+        <tr><td>Carré (4 identiques)</td><td>brelan ×2</td></tr>
+        <tr><td>Quinté (5 identiques)</td><td>brelan ×4</td></tr>
+        <tr><td>Suite 1-2-3-4-5 ou 2-3-4-5-6</td><td>500</td></tr>
+      </table>
+      <p class="hint" style="font-size:13px">Une combinaison ne compte que si elle sort <em>en un seul lancer</em>. Trois 1 obtenus en deux jets valent 300, pas 1000.</p>
+
+      <h2 style="margin-top:26px">Le déroulement d'un tour</h2>
+      <ol class="steps">
+        <li>Vous lancez les cinq dés.</li>
+        <li>Vous mettez de côté <strong>au moins un dé qui marque</strong>, et ses points vont dans le pot du tour.</li>
+        <li>Vous choisissez&nbsp;: <strong>banquer</strong> (le pot rejoint votre score, définitivement) ou <strong>relancer</strong> les dés restants pour faire grossir le pot.</li>
+        <li>Si un lancer ne sort <strong>aucun dé qui marque</strong>, le tour s'arrête et tout le pot est perdu.</li>
+        <li>Si les cinq dés marquent, vous récupérez les cinq dés et continuez à cumuler sur le même tour.</li>
+      </ol>
+
+      <h2 style="margin-top:26px">L'ouverture</h2>
+      <p class="hint">Tant qu'un joueur n'a pas marqué, il doit réunir un montant minimum <em>en un seul tour</em> pour entrer en jeu. En dessous, il ne peut pas banquer et repart à zéro. 300 et 500 sont les seuils les plus courants&nbsp;; l'application vous laisse fixer le vôtre, ou le désactiver avec 0.</p>
+
+      <h2 style="margin-top:26px">La fin de partie</h2>
+      <p class="hint">Par défaut, le premier joueur qui atteint ou dépasse l'objectif gagne immédiatement. C'est le point à trancher avant de commencer, car les tables ne jouent pas toutes pareil — voir les variantes.</p>
+
+      <div class="rule"></div>
+      <h2>Les variantes</h2>
+      <p class="hint" style="margin-bottom:18px">Ce jeu appartient à la famille du 5000 et du 10&nbsp;000, et chaque table a ses habitudes. Mettez-vous d'accord au premier tour plutôt qu'au moment où quelqu'un s'approche de la victoire.</p>
+
+      <div class="var">
+        <h3>Le score exact</h3>
+        <p>Il faut tomber pile sur l'objectif. Un tour qui ferait dépasser ne compte pas et les points sont perdus&nbsp;: la fin de partie devient un exercice de dosage, où l'on s'arrête volontairement sur un petit 50. Activable dans les réglages.</p>
+      </div>
+      <div class="var">
+        <h3>Le tour de riposte</h3>
+        <p>Quand un joueur atteint l'objectif, les autres ont droit à un dernier tour pour le dépasser. Le plus haut score l'emporte. Ça évite qu'un joueur gagne juste parce qu'il jouait en premier.</p>
+      </div>
+      <div class="var">
+        <h3>Le vol du pot</h3>
+        <p>Le joueur suivant peut reprendre les dés restants du joueur précédent, avec son pot, au lieu de repartir de cinq dés. Très risqué, très rapide&nbsp;: la partie s'accélère beaucoup.</p>
+      </div>
+      <div class="var">
+        <h3>Le troisième échec</h3>
+        <p>Trois tours perdus d'affilée coûtent 500 points au score déjà banqué. De quoi calmer ceux qui relancent toujours.</p>
+      </div>
+      <div class="var">
+        <h3>Le rebond à zéro</h3>
+        <p>Si les cinq dés sortent sans rien marquer, le joueur perd non seulement son pot mais aussi la totalité de son score. Brutal, à réserver aux parties courtes.</p>
+      </div>
+      <div class="var">
+        <h3>La relance obligatoire</h3>
+        <p>Tant qu'il reste un seul dé en main, on ne peut pas banquer&nbsp;: il faut le relancer. Le dernier dé qui marque relance les cinq.</p>
+      </div>
+      <div class="var">
+        <h3>Les paires</h3>
+        <p>Trois paires en un lancer valent 750, et deux brelans 1500. Variantes fréquentes chez ceux qui viennent du 10&nbsp;000.</p>
+      </div>
+      <div class="var">
+        <h3>L'objectif</h3>
+        <p>3000 fait une partie d'environ vingt minutes à quatre. 5000 et 10&nbsp;000 allongent nettement, et rendent l'ouverture presque anecdotique.</p>
+      </div>
+      <p class="hint" style="margin-top:22px;font-size:13px">L'application compte les points&nbsp;: les variantes qui modifient le calcul (paires, malus) se saisissent avec le bouton «&nbsp;Saisir un montant&nbsp;».</p>
+    </div>
+  </div>
+</div>
 
 <script>
 const app = document.getElementById('app');
@@ -181,6 +282,7 @@ function renderSetup(){
   </div>
 
   <button class="btn-brass" style="width:100%;padding:16px;font-size:17px" id="start">Commencer la partie</button>
+  <button class="btn-ghost" style="width:100%;margin-top:10px" data-rules>Lire les règles et les variantes</button>
   <p class="hint" style="text-align:center;margin-top:14px">1&nbsp;=&nbsp;100 · 5&nbsp;=&nbsp;50 · brelan de 1&nbsp;=&nbsp;1000 · brelan de X&nbsp;=&nbsp;X00 · carré&nbsp;=&nbsp;×2 · quinté&nbsp;=&nbsp;×4 · suite&nbsp;=&nbsp;500</p>`;
 
   const nb = document.getElementById('names');
@@ -321,7 +423,10 @@ function renderPlay(){
       <div class="bar" style="width:${Math.min(100,q.score/S.target*100)}%;height:3px;background:var(--brass);border-radius:2px;margin:-4px 0 8px 12px"></div>`).join('')}
   </div>
 
-  <button class="btn-ghost" style="width:100%" id="reset">Nouvelle partie</button>`;
+  <div class="row">
+    <button class="btn-ghost" data-rules>Règles</button>
+    <button class="btn-ghost" id="reset">Nouvelle partie</button>
+  </div>`;
 
   document.getElementById('bank').onclick = bank;
   document.getElementById('bust').onclick = bust;
@@ -366,11 +471,29 @@ function renderWin(){
   document.getElementById('undoT').onclick=()=>{S.phase='play';undoTurn()};
 }
 
+/* ---------- feuille de règles ---------- */
+const sheet = document.getElementById('sheet');
+function openRules(){
+  sheet.hidden = false;
+  sheet.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  sheet.scrollTop = 0;
+  document.getElementById('sheetClose').focus();
+}
+function closeRules(){
+  sheet.hidden = true;
+  sheet.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+}
+document.getElementById('sheetClose').onclick = closeRules;
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && !sheet.hidden) closeRules() });
+
 function render(){
   save();
   if(S.phase==='setup') renderSetup();
   else if(S.phase==='win') renderWin();
   else renderPlay();
+  app.querySelectorAll('[data-rules]').forEach(b => b.onclick = openRules);
   window.scrollTo({top:0,behavior:'instant'});
 }
 load();
